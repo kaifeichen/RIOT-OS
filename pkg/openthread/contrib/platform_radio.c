@@ -39,30 +39,7 @@
 
 #define RADIO_IEEE802154_FCS_LEN    (2U)
 #define IEEE802154_ACK_LENGTH (5)
-enum
-{
-    IEEE802154_FRAME_TYPE_MASK        = 0x7,     ///< (IEEE 802.15.4-2006) PSDU.FCF.frameType
-    IEEE802154_FRAME_TYPE_ACK         = 0x2,     ///< (IEEE 802.15.4-2006) frame type: ACK
-    IEEE802154_FRAME_PENDING          = (1<<4),  ///< (IEEE 802.15.4-2006) PSDU.FCF.bFramePending
-    IEEE802154_ACK_REQUEST            = (1<<5),  ///< (IEEE 802.15.4-2006) PSDU.FCF.bAR
-    IEEE802154_DSN_OFFSET             = 2,       ///< (IEEE 802.15.4-2006) PSDU.sequenceNumber
-    IEEE802154_MAC_MIN_BE             = 1,       ///< (IEEE 802.15.4-2006) macMinBE
-    IEEE802154_MAC_MAX_BE             = 5,       ///< (IEEE 802.15.4-2006) macMaxBE
-    IEEE802154_MAC_MAX_CSMA_BACKOFFS  = 4,       ///< (IEEE 802.15.4-2006) macMaxCSMABackoffs
-    IEEE802154_MAC_MAX_FRAMES_RETRIES = 3,       ///< (IEEE 802.15.4-2006) macMaxFrameRetries
-    IEEE802154_A_UINT_BACKOFF_PERIOD  = 20,      ///< (IEEE 802.15.4-2006 7.4.1) MAC constants
-    IEEE802154_A_TURNAROUND_TIME      = 12,      ///< (IEEE 802.15.4-2006 6.4.1) PHY constants
-    IEEE802154_PHY_SHR_DURATION       = 10,
-    ///< (IEEE 802.15.4-2006 6.4.2) PHY PIB attribute, specifically the O-QPSK PHY
-    IEEE802154_PHY_SYMBOLS_PER_OCTET  = 2,
-    ///< (IEEE 802.15.4-2006 6.4.2) PHY PIB attribute, specifically the O-QPSK PHY
-    IEEE802154_MAC_ACK_WAIT_DURATION  = (IEEE802154_A_UINT_BACKOFF_PERIOD +
-                                         IEEE802154_A_TURNAROUND_TIME     +
-                                         IEEE802154_PHY_SHR_DURATION      +
-                                         ( 6 * IEEE802154_PHY_SYMBOLS_PER_OCTET)),
-    ///< (IEEE 802.15.4-2006 7.4.2) macAckWaitDuration PIB attribute
-    IEEE802154_SYMBOLS_PER_SEC        = 62500    ///< (IEEE 802.15.4-2006 6.5.3.2) O-QPSK symbol rate
-};
+#define IEEE802154_DSN_OFFSET (2)
 
 static otRadioFrame sTransmitFrame;
 static otRadioFrame sReceiveFrame;
@@ -214,11 +191,11 @@ static inline otRadioFrame _create_fake_ack_frame(bool ackPending)
 
     ackFrame.mPsdu = psdu;
     ackFrame.mLength = IEEE802154_ACK_LENGTH;
-    ackFrame.mPsdu[0] = IEEE802154_FRAME_TYPE_ACK;
+    ackFrame.mPsdu[0] = IEEE802154_FCF_TYPE_ACK;
 
     if (ackPending)
     {
-        ackFrame.mPsdu[0] |= IEEE802154_FRAME_PENDING;
+        ackFrame.mPsdu[0] |= IEEE802154_FCF_FRAME_PEND;
     }
 
     ackFrame.mPsdu[1] = 0;
